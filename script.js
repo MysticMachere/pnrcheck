@@ -1,684 +1,493 @@
-/* =========================================
-   USER LOCATION
-========================================= */
+// ======================================================
+// RAILLIVE INDIA
+// Location handling + train search
+// ======================================================
 
-let userLocation = {
-    latitude: null,
-    longitude: null,
-    accuracy: null,
-    timestamp: null
-};
+(() => {
 
+    // ==================================================
+    // PRIVATE LOCATION VARIABLE
+    // ==================================================
+    // This variable is NOT attached to window.
+    // It is not displayed on the webpage.
+    //
+    // Example value:
+    // {
+    //     latitude: 10.12345,
+    //     longitude: 76.12345,
+    //     accuracy: 25
+    // }
+    // ==================================================
 
-/*
-    This variable can later be sent
-    to your backend/API.
-*/
-
-let locationVariable = userLocation;
-
-
-/* =========================================
-   REQUEST USER LOCATION
-========================================= */
-
-function requestLocation() {
-
-    /*
-        Check browser support.
-    */
-
-    if (!navigator.geolocation) {
-
-        document.getElementById(
-            "locationText"
-        ).textContent =
-            "Geolocation is not supported by this browser.";
-
-        return;
-    }
+    let privateUserLocation = null;
 
 
-    /*
-        Tell user that permission is
-        being requested.
-    */
+    // ==================================================
+    // DEMO TRAIN DATA
+    // ==================================================
 
-    document.getElementById(
-        "locationText"
-    ).textContent =
-        "Requesting your location permission...";
+    const trains = [
+        {
+            number: "12625",
+            name: "Kerala Express",
+            from: "Thiruvananthapuram",
+            to: "New Delhi",
+            departure: "11:15",
+            arrival: "14:30"
+        },
 
+        {
+            number: "16345",
+            name: "Netravati Express",
+            from: "Thiruvananthapuram",
+            to: "Mumbai",
+            departure: "09:30",
+            arrival: "16:10"
+        },
 
-    /*
-        Request current location.
-    */
+        {
+            number: "12624",
+            name: "Chennai Mail",
+            from: "Thiruvananthapuram",
+            to: "Chennai",
+            departure: "18:00",
+            arrival: "07:30"
+        },
 
-    navigator.geolocation.getCurrentPosition(
+        {
+            number: "12082",
+            name: "Jan Shatabdi Express",
+            from: "Thiruvananthapuram",
+            to: "Kozhikode",
+            departure: "06:00",
+            arrival: "12:45"
+        },
 
-        function (position) {
-
-            /*
-                Latitude
-            */
-
-            userLocation.latitude =
-                position.coords.latitude;
-
-
-            /*
-                Longitude
-            */
-
-            userLocation.longitude =
-                position.coords.longitude;
-
-
-            /*
-                Accuracy
-            */
-
-            userLocation.accuracy =
-                position.coords.accuracy;
-
-
-            /*
-                Time
-            */
-
-            userLocation.timestamp =
-                new Date().toISOString();
-
-
-            /*
-                Update variable.
-            */
-
-            locationVariable =
-                userLocation;
+        {
+            number: "16302",
+            name: "Venad Express",
+            from: "Thiruvananthapuram",
+            to: "Shoranur",
+            departure: "05:25",
+            arrival: "09:15"
+        }
+    ];
 
 
-            /*
-                Save location in browser.
-            */
+    // ==================================================
+    // LOCATION FUNCTION
+    // ==================================================
 
-            localStorage.setItem(
-                "railLiveUserLocation",
-                JSON.stringify(userLocation)
+    function requestUserLocation() {
+
+        if (!navigator.geolocation) {
+
+            showLocationStatus(
+                "Geolocation is not supported by this browser."
             );
 
-
-            /*
-                Update status.
-            */
-
-            document.getElementById(
-                "locationText"
-            ).textContent =
-                "Location received successfully.";
+            return;
+        }
 
 
-            /*
-                Show location information.
-            */
+        showLocationStatus(
+            "Requesting your location..."
+        );
 
-            const locationData =
-                document.getElementById(
-                    "locationData"
+
+        navigator.geolocation.getCurrentPosition(
+
+            // ==========================================
+            // SUCCESS
+            // ==========================================
+
+            function(position) {
+
+                privateUserLocation = {
+
+                    latitude: position.coords.latitude,
+
+                    longitude: position.coords.longitude,
+
+                    accuracy: position.coords.accuracy,
+
+                    timestamp: new Date().toISOString()
+                };
+
+
+                // ======================================
+                // LOCATION SUCCESS
+                // ======================================
+
+                showLocationStatus(
+                    "Location permission granted."
                 );
 
 
-            locationData.style.display =
-                "block";
+                // DO NOT DISPLAY COORDINATES
 
 
-            locationData.innerHTML =
-
-                "Latitude: " +
-                userLocation.latitude.toFixed(6) +
-
-                "<br>" +
-
-                "Longitude: " +
-                userLocation.longitude.toFixed(6) +
-
-                "<br>" +
-
-                "Accuracy: ±" +
-                Math.round(
-                    userLocation.accuracy
-                ) +
-                " metres" +
-
-                "<br>" +
-
-                "Timestamp: " +
-                userLocation.timestamp;
+                // ======================================
+                // OPTIONAL DEBUGGING
+                // ======================================
+                // Remove this console.log when publishing.
+                //
+                // console.log(
+                //     "Private location:",
+                //     privateUserLocation
+                // );
 
 
-            /*
-                Print to VS Code browser console.
-            */
+                // ======================================
+                // SAVE FOR THIS BROWSER SESSION
+                // ======================================
 
-            console.log(
-                "userLocation:",
-                userLocation
-            );
+                try {
 
+                    sessionStorage.setItem(
+                        "railLiveLocation",
+                        JSON.stringify(privateUserLocation)
+                    );
 
-            console.log(
-                "locationVariable:",
-                locationVariable
-            );
+                } catch (error) {
 
-        },
-
-
-        function (error) {
-
-            let message;
+                    console.log(
+                        "Could not save location to session storage."
+                    );
+                }
 
 
-            switch (error.code) {
+                // ======================================
+                // LOCATION IS NOW AVAILABLE INTERNALLY
+                // ======================================
 
-                case 1:
+                findNearbyStations();
 
-                    message =
-                        "Location permission was denied.";
-
-                    break;
-
-
-                case 2:
-
-                    message =
-                        "Your location could not be determined.";
-
-                    break;
+            },
 
 
-                case 3:
+            // ==========================================
+            // ERROR
+            // ==========================================
 
-                    message =
-                        "Location request timed out.";
+            function(error) {
 
-                    break;
+                console.log(
+                    "Geolocation error:",
+                    error.code,
+                    error.message
+                );
 
 
-                default:
+                let message;
 
-                    message =
-                        "Unable to obtain your location.";
 
+                switch (error.code) {
+
+                    case error.PERMISSION_DENIED:
+
+                        message =
+                            "Location permission was denied.";
+
+                        break;
+
+
+                    case error.POSITION_UNAVAILABLE:
+
+                        message =
+                            "Your device could not determine your location.";
+
+                        break;
+
+
+                    case error.TIMEOUT:
+
+                        message =
+                            "The location request timed out. Please try again.";
+
+                        break;
+
+
+                    default:
+
+                        message =
+                            "Unable to determine your location.";
+                }
+
+
+                showLocationStatus(message);
+            },
+
+
+            // ==========================================
+            // GEOLOCATION OPTIONS
+            // ==========================================
+
+            {
+                enableHighAccuracy: false,
+
+                timeout: 20000,
+
+                maximumAge: 60000
             }
+        );
+    }
 
 
-            document.getElementById(
-                "locationText"
-            ).textContent =
-                message;
+    // ==================================================
+    // LOCATION STATUS
+    // ==================================================
 
-        },
+    function showLocationStatus(message) {
+
+        const locationText =
+            document.getElementById("locationText");
 
 
-        {
-            enableHighAccuracy: true,
+        if (locationText) {
 
-            timeout: 10000,
+            locationText.textContent = message;
+        }
+    }
 
-            maximumAge: 60000
+
+    // ==================================================
+    // FIND NEARBY STATIONS
+    // ==================================================
+
+    function findNearbyStations() {
+
+        if (!privateUserLocation) {
+
+            showLocationStatus(
+                "Location is not available."
+            );
+
+            return;
         }
 
-    );
-}
-
-
-/* =========================================
-   DEMO TRAIN DATA
-========================================= */
-
-const demoTrains = [
-
-    {
-        number: "12623",
-
-        name: "Thiruvananthapuram Mail",
-
-        fromCode: "TVC",
-
-        fromName: "Thiruvananthapuram",
-
-        departure: "19:25",
-
-        toCode: "ERS",
-
-        toName: "Ernakulam",
-
-        arrival: "23:35",
-
-        status: "On Time"
-    },
-
-
-    {
-        number: "16302",
-
-        name: "Venad Express",
-
-        fromCode: "TVC",
-
-        fromName: "Thiruvananthapuram",
-
-        departure: "05:15",
-
-        toCode: "ERS",
-
-        toName: "Ernakulam",
-
-        arrival: "09:05",
-
-        status: "On Time"
-    },
-
-
-    {
-        number: "12075",
-
-        name: "Jan Shatabdi Express",
-
-        fromCode: "TVC",
-
-        fromName: "Thiruvananthapuram",
-
-        departure: "14:50",
-
-        toCode: "ERS",
-
-        toName: "Ernakulam",
-
-        arrival: "18:20",
-
-        status: "Running"
-    }
-
-];
-
-
-/* =========================================
-   SEARCH TRAINS
-========================================= */
-
-function searchTrains() {
-
-    /*
-        Get input values.
-    */
-
-    const from =
-        document
-            .getElementById("from")
-            .value
-            .trim()
-            .toLowerCase();
-
-
-    const to =
-        document
-            .getElementById("to")
-            .value
-            .trim()
-            .toLowerCase();
-
-
-    const results =
-        document.getElementById("results");
-
-
-    const resultCount =
-        document.getElementById("resultCount");
-
-
-    /*
-        Validate input.
-    */
-
-    if (!from || !to) {
-
-        results.innerHTML = `
-            <div class="empty">
-
-                Please enter both departure
-                and destination stations.
-
-            </div>
-        `;
-
-
-        resultCount.textContent =
-            "Invalid search";
-
-        return;
-    }
-
-
-    /*
-        Find matching trains.
-    */
-
-    const matches =
-        demoTrains.filter(function (train) {
-
-            const fromMatch =
-
-                train.fromCode
-                    .toLowerCase()
-                    .includes(from)
-
-                ||
-
-                train.fromName
-                    .toLowerCase()
-                    .includes(from);
-
-
-            const toMatch =
-
-                train.toCode
-                    .toLowerCase()
-                    .includes(to)
-
-                ||
-
-                train.toName
-                    .toLowerCase()
-                    .includes(to);
-
-
-            return fromMatch && toMatch;
-
-        });
-
-
-    /*
-        No trains found.
-    */
-
-    if (matches.length === 0) {
-
-        results.innerHTML = `
-            <div class="empty">
-
-                No trains found in the
-                demonstration database.
-
-                <br><br>
-
-                A live railway API can provide
-                real railway results here.
-
-            </div>
-        `;
-
-
-        resultCount.textContent =
-            "0 trains";
-
-        return;
-    }
-
-
-    /*
-        Update number of results.
-    */
-
-    resultCount.textContent =
-        matches.length +
-        " train" +
-        (matches.length === 1 ? "" : "s") +
-        " found";
-
-
-    /*
-        Create result cards.
-    */
-
-    results.innerHTML =
-
-        matches.map(function (train) {
-
-            let statusClass =
-                "on-time";
-
-
-            if (
-                train.status
-                    .toLowerCase()
-                    .includes("running")
-            ) {
-
-                statusClass =
-                    "running";
-            }
-
-
-            if (
-                train.status
-                    .toLowerCase()
-                    .includes("delay")
-            ) {
-
-                statusClass =
-                    "delayed";
-            }
-
-
-            return `
-
-                <article class="train">
-
-                    <div>
-
-                        <div class="train-name">
-
-                            ${train.name}
-
-                        </div>
-
-                        <div class="train-number">
-
-                            Train No.
-                            ${train.number}
-
-                        </div>
-
-                    </div>
-
-
-                    <div>
-
-                        <div class="time">
-
-                            ${train.departure}
-
-                        </div>
-
-                        <div class="station">
-
-                            ${train.fromCode}
-                            •
-                            ${train.fromName}
-
-                        </div>
-
-                    </div>
-
-
-                    <div>
-
-                        <div class="time">
-
-                            ${train.arrival}
-
-                        </div>
-
-                        <div class="station">
-
-                            ${train.toCode}
-                            •
-                            ${train.toName}
-
-                        </div>
-
-                    </div>
-
-
-                    <div>
-
-                        <span
-                            class="badge ${statusClass}"
-                        >
-
-                            ${train.status}
-
-                        </span>
-
-                        <div class="small">
-
-                            Demo schedule
-
-                        </div>
-
-                    </div>
-
-                </article>
-
-            `;
-
-        }).join("");
-}
-
-
-/* =========================================
-   SWAP STATIONS
-========================================= */
-
-function swapStations() {
-
-    const from =
-        document.getElementById("from");
-
-
-    const to =
-        document.getElementById("to");
-
-
-    const temporary =
-        from.value;
-
-
-    from.value =
-        to.value;
-
-
-    to.value =
-        temporary;
-}
-
-
-/* =========================================
-   LOAD SAVED LOCATION
-========================================= */
-
-const savedLocation =
-    localStorage.getItem(
-        "railLiveUserLocation"
-    );
-
-
-if (savedLocation) {
-
-    try {
 
         /*
-            Convert saved JSON back
-            into a JavaScript object.
-        */
-
-        userLocation =
-            JSON.parse(savedLocation);
-
-
-        locationVariable =
-            userLocation;
-
-
-        /*
-            Show saved location status.
-        */
-
-        document.getElementById(
-            "locationText"
-        ).textContent =
-            "A previously saved location is available.";
+         * The coordinates are available here.
+         *
+         * Example:
+         *
+         * privateUserLocation.latitude
+         * privateUserLocation.longitude
+         *
+         * They are NOT displayed on the website.
+         */
 
 
-        /*
-            Show saved coordinates.
-        */
-
-        const locationData =
-            document.getElementById(
-                "locationData"
-            );
-
-
-        locationData.style.display =
-            "block";
-
-
-        locationData.innerHTML =
-
-            "Latitude: " +
-
-            Number(
-                userLocation.latitude
-            ).toFixed(6) +
-
-            "<br>" +
-
-            "Longitude: " +
-
-            Number(
-                userLocation.longitude
-            ).toFixed(6) +
-
-            "<br>" +
-
-            "Accuracy: ±" +
-
-            Math.round(
-                userLocation.accuracy
-            ) +
-
-            " metres" +
-
-            "<br>" +
-
-            "Timestamp: " +
-
-            userLocation.timestamp;
-
-    }
-
-    catch (error) {
-
-        /*
-            Remove corrupted saved data.
-        */
-
-        localStorage.removeItem(
-            "railLiveUserLocation"
+        showLocationStatus(
+            "Your location has been detected."
         );
 
+
+        // ------------------------------------------------
+        // Future feature:
+        // Send privateUserLocation to your backend
+        // to find actual nearby railway stations.
+        // ------------------------------------------------
+
+        console.log(
+            "Nearby station search initiated."
+        );
     }
-}
+
+
+    // ==================================================
+    // RESTORE LOCATION FROM SESSION
+    // ==================================================
+
+    function restoreLocation() {
+
+        try {
+
+            const savedLocation =
+                sessionStorage.getItem(
+                    "railLiveLocation"
+                );
+
+
+            if (savedLocation) {
+
+                privateUserLocation =
+                    JSON.parse(savedLocation);
+
+
+                showLocationStatus(
+                    "Location is already available."
+                );
+            }
+
+        } catch (error) {
+
+            console.log(
+                "Could not restore saved location."
+            );
+        }
+    }
+
+
+    // ==================================================
+    // TRAIN SEARCH
+    // ==================================================
+
+    function searchTrains() {
+
+        const fromInput =
+            document.getElementById("fromStation");
+
+        const toInput =
+            document.getElementById("toStation");
+
+
+        if (!fromInput || !toInput) {
+
+            return;
+        }
+
+
+        const from =
+            fromInput.value.trim().toLowerCase();
+
+        const to =
+            toInput.value.trim().toLowerCase();
+
+
+        const results =
+            document.getElementById("trainResults");
+
+
+        if (!results) {
+
+            return;
+        }
+
+
+        if (!from && !to) {
+
+            results.innerHTML =
+                "<p>Please enter a source or destination station.</p>";
+
+            return;
+        }
+
+
+        const filteredTrains =
+            trains.filter(train => {
+
+                const matchesFrom =
+                    !from ||
+                    train.from.toLowerCase().includes(from);
+
+                const matchesTo =
+                    !to ||
+                    train.to.toLowerCase().includes(to);
+
+                return matchesFrom && matchesTo;
+            });
+
+
+        if (filteredTrains.length === 0) {
+
+            results.innerHTML =
+                "<p>No demo trains found.</p>";
+
+            return;
+        }
+
+
+        results.innerHTML =
+            filteredTrains.map(train => `
+
+                <div class="train-card">
+
+                    <div class="train-number">
+                        ${train.number}
+                    </div>
+
+                    <div class="train-name">
+                        ${train.name}
+                    </div>
+
+                    <div class="train-route">
+                        ${train.from}
+                        →
+                        ${train.to}
+                    </div>
+
+                    <div class="train-time">
+                        Departure:
+                        ${train.departure}
+                        |
+                        Arrival:
+                        ${train.arrival}
+                    </div>
+
+                </div>
+
+            `).join("");
+    }
+
+
+    // ==================================================
+    // SWAP STATIONS
+    // ==================================================
+
+    function swapStations() {
+
+        const fromInput =
+            document.getElementById("fromStation");
+
+        const toInput =
+            document.getElementById("toStation");
+
+
+        if (!fromInput || !toInput) {
+
+            return;
+        }
+
+
+        const temporary =
+            fromInput.value;
+
+
+        fromInput.value =
+            toInput.value;
+
+        toInput.value =
+            temporary;
+    }
+
+
+    // ==================================================
+    // MAKE FUNCTIONS AVAILABLE TO HTML
+    // ==================================================
+
+    window.requestUserLocation =
+        requestUserLocation;
+
+    window.searchTrains =
+        searchTrains;
+
+    window.swapStations =
+        swapStations;
+
+
+    // ==================================================
+    // STARTUP
+    // ==================================================
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            restoreLocation();
+
+        }
+    );
+
+})();
