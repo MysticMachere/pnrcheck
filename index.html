@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>RailLive India | Train Schedule</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- ================= HEADER ================= -->
+
+    <header>
+
+        <div class="logo">
+            🚆 RailLive India
+        </div>
+
+        <div class="header-status" id="apiStatus">
+            Demo Mode • Live API not connected
+        </div>
+
+    </header>
+
+
+    <!-- ================= NAVIGATION ================= -->
+
+    <nav>
+
+        <div class="nav-container">
+
+            <div class="nav-item">
+                Home
+            </div>
+
+            <div class="nav-item">
+                Train Search
+            </div>
+
+            <div class="nav-item">
+                PNR Status
+            </div>
+
+            <div class="nav-item">
+                Stations
+            </div>
+
+            <div class="nav-item">
+                Live Status
+            </div>
+
+        </div>
+
+    </nav>
+
+
+    <!-- ================= MAIN ================= -->
+
+    <main class="container">
+
+        <!-- HERO -->
+
+        <section class="hero">
+
+            <h1>
+                Indian Railway Train Schedule
+            </h1>
+
+            <p>
+                Search trains, check schedules and find
+                railway stations near your location.
+            </p>
+
+        </section>
+
+
+        <!-- ================= SEARCH ================= -->
+
+        <section class="card">
+
+            <h2 class="section-title">
+                🔎 Search Trains
+            </h2>
+
+            <div class="search-grid">
+
+                <!-- FROM -->
+
+                <div class="input-group">
+
+                    <label for="from">
+                        From Station
+                    </label>
+
+                    <input
+                        type="text"
+                        id="from"
+                        placeholder="e.g. TVC / Thiruvananthapuram"
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <!-- TO -->
+
+                <div class="input-group">
+
+                    <label for="to">
+                        To Station
+                    </label>
+
+                    <input
+                        type="text"
+                        id="to"
+                        placeholder="e.g. ERS / Ernakulam"
+                        autocomplete="off"
+                    >
+
+                </div>
+
+
+                <!-- SEARCH BUTTON -->
+
+                <button
+                    class="primary"
+                    onclick="searchTrains()"
+                >
+                    Search Trains
+                </button>
+
+            </div>
+
+
+            <!-- SWAP BUTTON -->
+
+            <div class="swap-container">
+
+                <button
+                    class="swap-button"
+                    onclick="swapStations()"
+                    title="Swap stations"
+                >
+                    ⇅
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= LOCATION ================= -->
+
+        <section class="card">
+
+            <div class="location">
+
+                <div class="location-text">
+
+                    <span class="location-title">
+                        📍 Find Railway Stations Near Me
+                    </span>
+
+                    <span
+                        class="location-status"
+                        id="locationText"
+                    >
+                        Location permission has not been requested.
+                    </span>
+
+                </div>
+
+
+                <button
+                    class="secondary"
+                    onclick="requestLocation()"
+                >
+                    Allow Location
+                </button>
+
+            </div>
+
+
+            <!-- LOCATION INFORMATION -->
+
+            <div
+                class="location-data"
+                id="locationData"
+            ></div>
+
+        </section>
+
+
+        <!-- ================= RESULTS ================= -->
+
+        <section class="card">
+
+            <div class="results-header">
+
+                <h2>
+                    🚆 Train Schedule
+                </h2>
+
+                <span
+                    class="result-count"
+                    id="resultCount"
+                >
+                    No search performed
+                </span>
+
+            </div>
+
+
+            <div id="results">
+
+                <div class="empty">
+
+                    Enter your departure and destination
+                    stations above and click
+                    <strong>Search Trains</strong>.
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================= INFORMATION ================= -->
+
+        <section class="card">
+
+            <div class="info-box">
+
+                <strong>
+                    About RailLive India
+                </strong>
+
+                <p>
+                    This is a demonstration railway
+                    information interface.
+                </p>
+
+                <p>
+                    Train information displayed in this
+                    prototype is sample data.
+                </p>
+
+                <p>
+                    A production version can connect this
+                    interface to a legitimate railway data
+                    service for live train information.
+                </p>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer>
+
+        RailLive India • Railway Information Prototype
+
+        <br>
+        <br>
+
+        This project is not affiliated with or operated
+        by Indian Railways or IRCTC.
+
+    </footer>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

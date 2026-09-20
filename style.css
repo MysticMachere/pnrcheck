@@ -1,0 +1,694 @@
+/* =========================================
+   GENERAL
+========================================= */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+
+    background:
+        linear-gradient(
+            rgba(235, 239, 245, 0.96),
+            rgba(235, 239, 245, 0.96)
+        ),
+        linear-gradient(
+            135deg,
+            #e8edf3,
+            #f8f9fb,
+            #e5eaf0
+        );
+
+    color: #222;
+
+    min-height: 100vh;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+header {
+    background: #073b78;
+
+    color: white;
+
+    min-height: 72px;
+
+    padding: 0 7%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    border-bottom: 4px solid #e31e24;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+
+.logo {
+    font-size: 23px;
+
+    font-weight: 700;
+
+    letter-spacing: 0.3px;
+}
+
+
+.header-status {
+    font-size: 13px;
+
+    color: #e8eef7;
+}
+
+
+/* =========================================
+   NAVIGATION
+========================================= */
+
+nav {
+    background: white;
+
+    border-bottom: 1px solid #d4d9e0;
+
+    box-shadow:
+        0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+
+.nav-container {
+    max-width: 1120px;
+
+    margin: auto;
+
+    padding: 0 20px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+}
+
+
+.nav-item {
+    padding: 14px 18px;
+
+    color: #073b78;
+
+    font-size: 14px;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    border-bottom: 3px solid transparent;
+}
+
+
+.nav-item:hover {
+    background: #f1f5f9;
+
+    border-bottom-color: #e31e24;
+}
+
+
+/* =========================================
+   MAIN CONTAINER
+========================================= */
+
+.container {
+    max-width: 1120px;
+
+    margin: 35px auto;
+
+    padding: 0 20px;
+}
+
+
+/* =========================================
+   HERO
+========================================= */
+
+.hero {
+    text-align: center;
+
+    margin-bottom: 28px;
+}
+
+
+.hero h1 {
+    color: #073b78;
+
+    font-size: 36px;
+
+    font-weight: 700;
+}
+
+
+.hero p {
+    color: #555;
+
+    margin-top: 9px;
+
+    font-size: 15px;
+}
+
+
+/* =========================================
+   CARDS
+========================================= */
+
+.card {
+    background: #ffffff;
+
+    border-radius: 5px;
+
+    padding: 24px;
+
+    margin-bottom: 20px;
+
+    border: 1px solid #d5dbe3;
+
+    box-shadow:
+        0 3px 10px rgba(0, 0, 0, 0.08);
+}
+
+
+/* =========================================
+   SECTION TITLE
+========================================= */
+
+.section-title {
+    color: #073b78;
+
+    font-size: 21px;
+
+    border-bottom: 2px solid #e31e24;
+
+    padding-bottom: 10px;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================
+   SEARCH
+========================================= */
+
+.search-grid {
+    display: grid;
+
+    grid-template-columns:
+        1fr
+        1fr
+        160px;
+
+    gap: 15px;
+}
+
+
+.input-group label {
+    font-size: 13px;
+
+    font-weight: 700;
+
+    color: #333;
+
+    display: block;
+
+    margin-bottom: 7px;
+}
+
+
+input {
+    width: 100%;
+
+    padding: 13px 14px;
+
+    border: 1px solid #bfc7d2;
+
+    border-radius: 3px;
+
+    font-size: 15px;
+
+    background: white;
+
+    outline: none;
+
+    transition: 0.2s;
+}
+
+
+input:focus {
+    border-color: #1769aa;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(23, 105, 170, 0.12);
+}
+
+
+/* =========================================
+   BUTTONS
+========================================= */
+
+button {
+    border: none;
+
+    border-radius: 3px;
+
+    padding: 13px 18px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+
+    font-size: 14px;
+}
+
+
+.primary {
+    background: #e31e24;
+
+    color: white;
+
+    border: 1px solid #c8171d;
+}
+
+
+.primary:hover {
+    background: #c8171d;
+}
+
+
+.secondary {
+    background: #073b78;
+
+    color: white;
+
+    border: 1px solid #052e60;
+}
+
+
+.secondary:hover {
+    background: #052e60;
+}
+
+
+/* =========================================
+   SWAP
+========================================= */
+
+.swap-container {
+    display: flex;
+
+    justify-content: center;
+
+    margin: 10px 0;
+}
+
+
+.swap-button {
+    width: 40px;
+
+    height: 40px;
+
+    padding: 0;
+
+    border-radius: 50%;
+
+    background: #073b78;
+
+    color: white;
+
+    font-size: 18px;
+}
+
+
+/* =========================================
+   LOCATION
+========================================= */
+
+.location {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+
+.location-text {
+    flex: 1;
+}
+
+
+.location-title {
+    display: block;
+
+    color: #073b78;
+
+    font-size: 16px;
+
+    font-weight: 700;
+
+    margin-bottom: 5px;
+}
+
+
+.location-status {
+    font-size: 13px;
+
+    color: #666;
+}
+
+
+/* =========================================
+   LOCATION DATA
+========================================= */
+
+.location-data {
+    display: none;
+
+    margin-top: 15px;
+
+    padding: 12px;
+
+    background: #f3f7fb;
+
+    border: 1px solid #d5dfe9;
+
+    border-left: 4px solid #073b78;
+
+    font-family: monospace;
+
+    font-size: 12px;
+
+    color: #333;
+}
+
+
+/* =========================================
+   RESULTS
+========================================= */
+
+.results-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 15px;
+}
+
+
+.results-header h2 {
+    color: #073b78;
+
+    font-size: 21px;
+}
+
+
+.result-count {
+    font-size: 13px;
+
+    color: #777;
+}
+
+
+#results {
+    display: grid;
+
+    gap: 12px;
+}
+
+
+/* =========================================
+   TRAIN CARD
+========================================= */
+
+.train {
+    border: 1px solid #d5dbe3;
+
+    border-left: 5px solid #073b78;
+
+    background: #ffffff;
+
+    border-radius: 4px;
+
+    padding: 18px;
+
+    display: grid;
+
+    grid-template-columns:
+        1.4fr
+        1fr
+        1fr
+        auto;
+
+    align-items: center;
+
+    gap: 15px;
+
+    transition: 0.2s;
+}
+
+
+.train:hover {
+    box-shadow:
+        0 4px 12px
+        rgba(0, 0, 0, 0.1);
+
+    transform: translateY(-1px);
+}
+
+
+.train-name {
+    font-weight: 700;
+
+    color: #073b78;
+
+    font-size: 16px;
+}
+
+
+.train-number {
+    font-size: 13px;
+
+    color: #777;
+
+    margin-top: 4px;
+}
+
+
+.time {
+    font-size: 21px;
+
+    font-weight: 700;
+
+    color: #222;
+}
+
+
+.station {
+    font-size: 12px;
+
+    color: #777;
+
+    margin-top: 2px;
+}
+
+
+/* =========================================
+   STATUS BADGES
+========================================= */
+
+.badge {
+    display: inline-block;
+
+    padding: 5px 10px;
+
+    border-radius: 3px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+
+.on-time {
+    background: #e8f5e9;
+
+    color: #237a2b;
+
+    border: 1px solid #b9dfbd;
+}
+
+
+.running {
+    background: #fff4df;
+
+    color: #a15b00;
+
+    border: 1px solid #efd39f;
+}
+
+
+.delayed {
+    background: #fdecec;
+
+    color: #b42318;
+
+    border: 1px solid #efb5b2;
+}
+
+
+.small {
+    font-size: 12px;
+
+    color: #777;
+
+    margin-top: 5px;
+}
+
+
+/* =========================================
+   EMPTY RESULT
+========================================= */
+
+.empty {
+    text-align: center;
+
+    color: #777;
+
+    padding: 35px;
+
+    border: 1px dashed #cbd5e1;
+
+    background: #fafafa;
+
+    border-radius: 4px;
+}
+
+
+/* =========================================
+   INFORMATION
+========================================= */
+
+.info-box {
+    background: #f4f8fc;
+
+    border-left: 4px solid #073b78;
+
+    padding: 15px;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+
+    color: #555;
+}
+
+
+.info-box strong {
+    color: #073b78;
+}
+
+
+.info-box p {
+    margin-top: 6px;
+}
+
+
+/* =========================================
+   FOOTER
+========================================= */
+
+footer {
+    background: #073b78;
+
+    color: #dbe7f5;
+
+    margin-top: 40px;
+
+    padding: 25px 7%;
+
+    text-align: center;
+
+    font-size: 12px;
+
+    border-top: 4px solid #e31e24;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 750px) {
+
+    header {
+        padding: 15px 5%;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 5px;
+    }
+
+
+    .nav-container {
+        overflow-x: auto;
+
+        white-space: nowrap;
+    }
+
+
+    .search-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .train {
+        grid-template-columns: 1fr 1fr;
+    }
+
+
+    .hero h1 {
+        font-size: 28px;
+    }
+
+
+    .location {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+
+    .results-header {
+        align-items: flex-start;
+
+        gap: 5px;
+
+        flex-direction: column;
+    }
+
+}
